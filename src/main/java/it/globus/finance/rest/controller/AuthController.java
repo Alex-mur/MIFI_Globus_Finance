@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
     private final AuthenticationService authenticationService;
 
@@ -22,12 +22,12 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/register")
     public JwtAuthenticationResponse signUp(@RequestBody SignUpRequest request) {
         return authenticationService.signUp(request);
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/login")
     public JwtAuthenticationResponse signIn(@RequestBody SignInRequest request) {
         return authenticationService.signIn(request);
     }

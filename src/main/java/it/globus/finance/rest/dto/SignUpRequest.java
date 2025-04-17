@@ -4,10 +4,12 @@ package it.globus.finance.rest.dto;
 public class SignUpRequest {
     private String username;
     private String password;
+    private String email;
 
-    public SignUpRequest(String username, String password) {
+    public SignUpRequest(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public String getUsername() {
@@ -25,4 +27,14 @@ public class SignUpRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
+
+

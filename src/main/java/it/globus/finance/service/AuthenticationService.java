@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuthenticationService {
     private final UserService userService;
@@ -29,7 +31,13 @@ public class AuthenticationService {
 
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
         String encodedPassword = new BCryptPasswordEncoder().encode(request.getPassword());
-        var user = new User(request.getUsername(), encodedPassword, Role.USER);
+        var user = new User(
+                request.getUsername(),
+                encodedPassword,
+                Role.USER,
+                request.getEmail(),
+                true,
+                LocalDateTime.now());
         userService.create(user);
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
