@@ -6,8 +6,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
-
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
@@ -20,7 +18,7 @@ public class TransactionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
-            @PathVariable BigInteger id,
+            @PathVariable Long id,
             @RequestBody TransactionUpdateRequest request) {
         try {
             transactionService.updateTransaction(id, request);
