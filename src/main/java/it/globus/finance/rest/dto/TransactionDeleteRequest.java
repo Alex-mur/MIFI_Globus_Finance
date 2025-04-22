@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class TransactionGetRequest {
+public class TransactionDeleteRequest {
     private LocalDateTime transactionDate;
     private String transactionType;
     private BigDecimal amount;
@@ -20,5 +20,4 @@ public class TransactionGetRequest {
     private String receiverPhone;
     private String receiverType;
     private Long categoryId;
-    private long userId;
 }
