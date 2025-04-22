@@ -73,21 +73,6 @@ public class Transaction {
     public Transaction() {}
 
     public Transaction(User user, LocalDateTime transactionDate, String transactionType, BigDecimal amount, String comment, String status, String senderBank, String senderAccount, String receiverBank, String receiverInn, String receiverAccount, String receiverPhone, Category category, String receiverType, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.user = user;
-        this.transactionDate = transactionDate;
-        this.transactionType = transactionType;
-        this.amount = amount;
-        this.comment = comment;
-        this.status = status;
-        this.senderBank = senderBank;
-        this.senderAccount = senderAccount;
-        this.receiverBank = receiverBank;
-        this.receiverInn = receiverInn;
-        this.receiverAccount = receiverAccount;
-        this.receiverPhone = receiverPhone;
-        this.category = category;
-        this.receiverType = receiverType;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+
     }
 }
