@@ -3,6 +3,7 @@ package it.globus.finance.rest.controller;
 import it.globus.finance.rest.dto.TransactionUpdateRequest;
 import it.globus.finance.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class TransactionController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
             @PathVariable Long id,
-            @RequestBody TransactionUpdateRequest request) {
+            @RequestBody @Valid TransactionUpdateRequest request) {
         try {
             transactionService.updateTransaction(id, request);
             return ResponseEntity.ok().build();

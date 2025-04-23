@@ -9,6 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 @Service
 public class TransactionService {
@@ -21,29 +23,38 @@ public class TransactionService {
         this.categoryRepo = categoryRepo;
     }
 
+    private <T> void applyIfPresent(T value, Consumer<T> setter) {
+        if (value != null) setter.accept(value);
+    }
+
     public void updateTransaction(Long id, TransactionUpdateRequest request) {
         Transaction transaction = transactionRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
 
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setTransactionType(request.getTransactionType());
-        transaction.setAmount(request.getAmount());
-        transaction.setComment(request.getComment());
-        transaction.setStatus(request.getStatus());
-        transaction.setSenderBank(request.getSenderBank());
-        transaction.setSenderAccount(request.getSenderAccount());
-        transaction.setReceiverBank(request.getReceiverBank());
-        transaction.setReceiverInn(request.getReceiverInn());
-        transaction.setReceiverAccount(request.getReceiverAccount());
-        transaction.setReceiverPhone(request.getReceiverPhone());
-        transaction.setReceiverType(request.getReceiverType());
-        if (request.getCategoryId() != null) {
-            Category category = categoryRepo.findById(request.getCategoryId())
+        applyIfPresent(request.getTransactionType(), transaction::setTransactionType);
+        applyIfPresent(request.getAmount(), transaction::setAmount);
+        applyIfPresent(request.getComment(), transaction::setComment);
+        applyIfPresent(request.getStatus(), transaction::setStatus);
+        applyIfPresent(request.getSenderBank(), transaction::setSenderBank);
+        applyIfPresent(request.getSenderAccount(), transaction::setSenderAccount);
+        applyIfPresent(request.getReceiverBank(), transaction::setReceiverBank);
+        applyIfPresent(request.getReceiverInn(), transaction::setReceiverInn);
+        applyIfPresent(request.getReceiverAccount(), transaction::setReceiverAccount);
+        applyIfPresent(request.getReceiverPhone(), transaction::setReceiverPhone);
+        applyIfPresent(request.getReceiverType(), transaction::setReceiverType);
+
+        applyIfPresent(request.getTransactionDate(), dateStr -> {
+            LocalDateTime parsed = LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+            transaction.setTransactionDate(parsed);
+        });
+
+        applyIfPresent(request.getCategoryId(), catId -> {
+            Category category = categoryRepo.findById(catId)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
             transaction.setCategory(category);
-        }
-        transaction.setUpdatedAt(LocalDateTime.now());
+        });
 
+        transaction.setUpdatedAt(LocalDateTime.now());
         transactionRepo.save(transaction);
     }
 }

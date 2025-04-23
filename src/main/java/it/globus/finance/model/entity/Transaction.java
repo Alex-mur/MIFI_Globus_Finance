@@ -70,7 +70,8 @@ public class Transaction {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
     public Transaction(User user, LocalDateTime transactionDate, String transactionType, BigDecimal amount, String comment, String status, String senderBank, String senderAccount, String receiverBank, String receiverInn, String receiverAccount, String receiverPhone, Category category, String receiverType, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;

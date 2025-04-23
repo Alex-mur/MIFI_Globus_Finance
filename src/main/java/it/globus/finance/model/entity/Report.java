@@ -3,7 +3,6 @@ package it.globus.finance.model.entity;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,6 +32,9 @@ public class Report {
         this.parameters = parameters;
         this.generatedAt = generatedAt;
         this.filePath = filePath;
+    }
+
+    public Report() {
     }
 
     public Long getId() {

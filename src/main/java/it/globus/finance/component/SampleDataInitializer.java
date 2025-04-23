@@ -52,7 +52,7 @@ public class SampleDataInitializer {
         User u3 = createUser("u3", "user3@example.com", Role.USER);
 
         var users = StreamSupport
-                .stream(userRepository.saveAll(List.of(u1, u2, u3)).spliterator(),false)
+                .stream(userRepository.saveAll(List.of(u1, u2, u3)).spliterator(), false)
                 .toList();
 
         // Создание категорий
@@ -72,11 +72,11 @@ public class SampleDataInitializer {
     }
 
     private User createUser(String username, String email, Role role) {
-        return new User(username, passwordEncoder.encode("123"),role,email,true, LocalDateTime.now());
+        return new User(username, passwordEncoder.encode("123"), role, email, true, LocalDateTime.now());
     }
 
     private Category createCategory(String name, CategoryType type, String description) {
-        return new Category(name,type,description);
+        return new Category(name, type, description);
     }
 
     private void createTransactions(List<User> users, List<Category> categories) {
@@ -119,7 +119,7 @@ public class SampleDataInitializer {
         t3.setSenderAccount("40817810222222222");
         t3.setReceiverAccount("40817810333333333");
 
-         // Transaction 5 (долгая транзакция)
+        // Transaction 5 (долгая транзакция)
         Transaction t5 = new Transaction();
         t5.setUser(users.get(1));
         t5.setTransactionDate(LocalDateTime.of(2023, 10, 1, 9, 30));
