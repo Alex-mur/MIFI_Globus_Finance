@@ -3,8 +3,6 @@ package it.globus.finance.model.entity;
 import it.globus.finance.model.CategoryType;
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
-
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -21,7 +19,8 @@ public class Category {
     @Column(nullable = false)
     private String description;
 
-    public Category() {}
+    public Category() {
+    }
 
     public Category(String name, CategoryType type, String description) {
         this.name = name;

@@ -2,13 +2,14 @@ package it.globus.finance.model.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -59,7 +60,7 @@ public class Transaction {
     private Category category;
 
     @Column(name = "entity_type", length = 50)
-    private String entityType;
+    private String receiverType;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
@@ -69,9 +70,10 @@ public class Transaction {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
-    public Transaction(User user, LocalDateTime transactionDate, String transactionType, BigDecimal amount, String comment, String status, String senderBank, String senderAccount, String receiverBank, String receiverInn, String receiverAccount, String receiverPhone, Category category, String entityType, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Transaction(User user, LocalDateTime transactionDate, String transactionType, BigDecimal amount, String comment, String status, String senderBank, String senderAccount, String receiverBank, String receiverInn, String receiverAccount, String receiverPhone, Category category, String receiverType, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
@@ -85,140 +87,8 @@ public class Transaction {
         this.receiverAccount = receiverAccount;
         this.receiverPhone = receiverPhone;
         this.category = category;
-        this.entityType = entityType;
+        this.receiverType = receiverType;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getTransactionDate() {
-        return transactionDate;
-    }
-
-    public void setTransactionDate(LocalDateTime transactionDate) {
-        this.transactionDate = transactionDate;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getSenderBank() {
-        return senderBank;
-    }
-
-    public void setSenderBank(String senderBank) {
-        this.senderBank = senderBank;
-    }
-
-    public String getSenderAccount() {
-        return senderAccount;
-    }
-
-    public void setSenderAccount(String senderAccount) {
-        this.senderAccount = senderAccount;
-    }
-
-    public String getReceiverBank() {
-        return receiverBank;
-    }
-
-    public void setReceiverBank(String receiverBank) {
-        this.receiverBank = receiverBank;
-    }
-
-    public String getReceiverInn() {
-        return receiverInn;
-    }
-
-    public void setReceiverInn(String receiverInn) {
-        this.receiverInn = receiverInn;
-    }
-
-    public String getReceiverAccount() {
-        return receiverAccount;
-    }
-
-    public void setReceiverAccount(String receiverAccount) {
-        this.receiverAccount = receiverAccount;
-    }
-
-    public String getReceiverPhone() {
-        return receiverPhone;
-    }
-
-    public void setReceiverPhone(String receiverPhone) {
-        this.receiverPhone = receiverPhone;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public String getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

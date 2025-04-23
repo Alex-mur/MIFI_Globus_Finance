@@ -1,7 +1,6 @@
 package it.globus.finance.rest.controller;
 
 
-
 import it.globus.finance.rest.dto.JwtAuthenticationResponse;
 import it.globus.finance.rest.dto.SignInRequest;
 import it.globus.finance.rest.dto.SignUpRequest;

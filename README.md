@@ -18,7 +18,7 @@
 3 метода API:
 - Регистрация нового пользователя, доступен без аутентификации, возвращает токен
   ```
-  POST /auth/sign-up
+  POST /auth/register
   {
     "username": "user",
     "password": "123"
@@ -27,7 +27,7 @@
 
 - Вход в систему, доступен без аутентификации, также возвращает токен
   ```
-  POST /auth/sign-in
+  POST /auth/login
   {
     "username": "user",
     "password": "123"
