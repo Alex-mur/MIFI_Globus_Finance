@@ -59,6 +59,28 @@ public class TransactionService {
         return transaction;
     }
 
+    public Transaction deleteTransaction(Long id) {
+        Transaction transaction = transactionRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        if(!isTransactionOwnedByUser(transaction))
+            throw new EntityNotFoundException("Transaction is not owned by user");
+
+        transaction.setStatus("Платеж удален");
+        transactionRepo.delete(transaction);
+        return transaction;
+    }
+
+    public Transaction getTransaction(Long id) {
+        Transaction transaction = transactionRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        if(!isTransactionOwnedByUser(transaction))
+            throw new EntityNotFoundException("Transaction is not owned by user");
+
+        return transaction;
+    }
+
     public Transaction updateTransaction(Long id, TransactionUpdateRequest request) {
         Transaction transaction = transactionRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
@@ -89,5 +111,9 @@ public class TransactionService {
         transaction.setUpdatedAt(LocalDateTime.now());
         transactionRepo.save(transaction);
         return transaction;
+    }
+
+    private boolean isTransactionOwnedByUser(Transaction transaction) {
+        return userService.getCurrentUser().getId() == transaction.getUser().getId();
     }
 }
