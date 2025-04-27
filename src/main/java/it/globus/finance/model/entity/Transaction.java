@@ -57,7 +57,7 @@ public class Transaction {
     @Column(name = "receiver_phone", length = 20)
     private String receiverPhone;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
