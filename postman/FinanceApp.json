@@ -1,0 +1,225 @@
+{
+  "info": {
+    "_postman_id": "ac6cc32f-e537-4b2c-ae87-3438722c4900",
+    "name": "FinanceApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "17868740"
+  },
+  "item": [
+    {
+      "name": "filter",
+      "item": [
+        {
+          "name": "Фильтрация по банку отправителя (Сбербанк)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderBank\": \"Сбербанк\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация по банку получателя (Газпромбанк)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiverBank\": \"Газпромбанк\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация по сумме от 1000 до 3000",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountFrom\": 1000.00,\n  \"amountTo\": 3000.00\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация по статусу (В обработке)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"В обработке\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация доходов за последние 10 дней",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionType\": \"INCOME\",\n  \"dateFrom\": \"11.04.2025 00:00\",\n  \"dateTo\": \"21.04.2025 23:59\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация по ИНН",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiverInn\": \"77000000010\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Фильтрация по категории (ID 1)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+              }
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "update transaction",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
+          }
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"transactionDate\": \"20.04.2025 15:30\",\n  \"transactionType\": \"EXPENSE\",\n  \"amount\": 2500.00,\n  \"comment\": \"OK test\",\n  \"status\": \"CONFIRMED\",\n  \"senderBank\": \"Рога Банк\",\n  \"senderAccount\": \"40817810000000000001\",\n  \"receiverBank\": \"Получатель Банк\",\n  \"receiverInn\": \"12345678901\",\n  \"receiverAccount\": \"40702810900000001234\",\n  \"receiverPhone\": \"+71234567890\",\n  \"receiverType\": \"Физ.лицо\",\n  \"categoryId\": 1\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/api/transactions/1"
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"u1\",\n  \"password\": \"123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/api/auth/login"
+      },
+      "response": []
+    }
+  ]
+}
