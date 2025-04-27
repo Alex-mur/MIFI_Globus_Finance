@@ -1,5 +1,6 @@
 package it.globus.finance.rest.controller;
 
+import it.globus.finance.rest.dto.TransactionCreateRequest;
 import it.globus.finance.rest.dto.TransactionUpdateRequest;
 import it.globus.finance.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,13 +18,22 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+    @PostMapping("/")
+    public ResponseEntity<?> createTransaction(
+            @RequestBody @Valid TransactionCreateRequest request) {
+        try {
+            return ResponseEntity.ok(transactionService.createTransaction(request));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
             @PathVariable Long id,
             @RequestBody @Valid TransactionUpdateRequest request) {
         try {
-            transactionService.updateTransaction(id, request);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(transactionService.updateTransaction(id, request));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
