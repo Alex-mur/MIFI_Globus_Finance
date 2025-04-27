@@ -7,6 +7,7 @@ import it.globus.finance.model.repo.TransactionRepo;
 import it.globus.finance.rest.dto.TransactionGetRequest;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -32,8 +33,8 @@ public class TransactionService {
     public TransactionGetRequest getTransaction(Long id) {
         Transaction transaction = transactionRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
-        
-        if (!isUserTransaction(transaction.getUser().getId()))
+
+        if (!isTransactionOwnedByUser(transaction))
             throw new IllegalStateException("Cannot get transaction belonging to another user: only the owner can get this transaction");
 
         return new TransactionGetRequest(
@@ -58,18 +59,27 @@ public class TransactionService {
         Transaction transaction = transactionRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
 
-        if (!isUserTransaction(transaction.getUser().getId())) 
+        if (!isTransactionOwnedByUser(transaction))
             throw new IllegalStateException("Cannot delete transaction belonging to another user: only the owner can delete this transaction");
-        
+
         if (NON_DELETABLE_STATUSES.contains(transaction.getStatus().toUpperCase())) {
             throw new IllegalStateException("Cannot delete transaction with status: " + transaction.getStatus());
         }
 
         transactionRepo.delete(transaction);
     }
-    
-    protected boolean isUserTransaction(Long id) {
-        User currentUser = new User();
-        return id == currentUser.getId();
+
+    private Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            User currentUser = (User) principal;
+            return currentUser.getId();
+        }
+
+        throw new IllegalStateException("Principal is not an instance of User");
+    }
+
+    private boolean isTransactionOwnedByUser(Transaction transaction) {
+        return transaction.getUser().getId() == getCurrentUserId();
     }
 }

@@ -4,5 +4,8 @@ import it.globus.finance.model.entity.Transaction;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface TransactionRepo extends CrudRepository<Transaction, Long> {}
+public interface TransactionRepo extends CrudRepository<Transaction, Long> {
+    Optional<List<Transaction>> findByUserId(long id);
+}
