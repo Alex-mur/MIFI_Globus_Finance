@@ -1,6 +1,8 @@
 package it.globus.finance.service;
 
+import it.globus.finance.configuration.exception.RequestException;
 import it.globus.finance.model.entity.Category;
+import it.globus.finance.model.entity.Status;
 import it.globus.finance.model.entity.Transaction;
 import it.globus.finance.model.repo.CategoryRepo;
 import it.globus.finance.model.repo.TransactionRepo;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 @Service
@@ -30,6 +33,13 @@ public class TransactionService {
     private final CategoryRepo categoryRepo;
     private final UserService userService;
     private final EntityManager entityManager;
+    private static final Set<String> NON_DELETABLE_STATUSES = Set.of(
+            Status.CONFIRMED.getDisplayName(),
+            Status.PROCESSING.getDisplayName(),
+            Status.CANCELED.getDisplayName(),
+            Status.PAYMENT_COMPLETED.getDisplayName(),
+            Status.REFUNDED.getDisplayName()
+    );
 
     public TransactionService(TransactionRepo transactionRepo, CategoryRepo categoryRepo, UserService userService, EntityManager entityManager) {
         this.transactionRepo = transactionRepo;
@@ -61,6 +71,32 @@ public class TransactionService {
             transaction.setCategory(category);
         });
         transactionRepo.save(transaction);
+        return transaction;
+    }
+
+    public Transaction deleteTransaction(Long id) {
+        Transaction transaction = transactionRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        if(!isTransactionOwnedByUser(transaction))
+            throw new RequestException("Transaction is not owned by user");
+
+        if (NON_DELETABLE_STATUSES.contains(transaction.getStatus())) {
+            throw new RequestException("Cannot delete transaction with status: " + transaction.getStatus());
+        }
+
+        transaction.setStatus(String.valueOf(Status.PAYMENT_DELETED.getDisplayName()));
+        transactionRepo.delete(transaction);
+        return transaction;
+    }
+
+    public Transaction getTransaction(Long id) {
+        Transaction transaction = transactionRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        if(!isTransactionOwnedByUser(transaction))
+            throw new RequestException("Transaction is not owned by user");
+
         return transaction;
     }
 
@@ -146,6 +182,10 @@ public class TransactionService {
 
         query.select(transaction).where(cb.and(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(query).getResultList();
+    }
+
+    private boolean isTransactionOwnedByUser(Transaction transaction) {
+        return userService.getCurrentUser().getId() == transaction.getUser().getId();
     }
 
     private void fillTransactionData(Transaction transaction, String transactionType, BigDecimal amount, String comment,
