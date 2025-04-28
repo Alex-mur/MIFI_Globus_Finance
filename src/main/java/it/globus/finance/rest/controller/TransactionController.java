@@ -28,6 +28,26 @@ public class TransactionController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTransaction(
+            @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(transactionService.getTransaction(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTransaction(
+            @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(transactionService.deleteTransaction(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
             @PathVariable Long id,
