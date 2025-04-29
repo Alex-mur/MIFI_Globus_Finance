@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -80,57 +81,39 @@ public class SampleDataInitializer {
     }
 
     private void createTransactions(List<User> users, List<Category> categories) {
-        // Transaction 1
-        Transaction t1 = new Transaction();
-        t1.setUser(users.get(0));
-        t1.setTransactionDate(LocalDateTime.now().minusDays(5));
-        t1.setTransactionType("test");
-        t1.setAmount(new BigDecimal("2500.50"));
-        t1.setStatus("Завершено");
-        t1.setComment("Оплата ресторана");
-        t1.setCategory(categories.get(0));
-        t1.setSenderBank("Сбербанк");
-        t1.setSenderAccount("408178101111111");
-        t1.setReceiverInn("7736207543");
-        t1.setReceiverAccount("407028105012345");
+        List<Transaction> transactions = new ArrayList<>();
 
-        // Transaction 2
-        Transaction t2 = new Transaction();
-        t2.setUser(users.get(1));
-        t2.setTransactionDate(LocalDateTime.now().minusDays(5));
-        t2.setTransactionType("test");
-        t2.setAmount(new BigDecimal("2500.50"));
-        t2.setStatus("Завершено");
-        t2.setComment("Оплата`");
-        t2.setCategory(categories.get(1));
-        t2.setSenderBank("Сбербанк");
-        t2.setSenderAccount("408178101111111");
-        t2.setReceiverInn("7736207543");
-        t2.setReceiverAccount("40702810500000345");
+        String[] senderBanks = {"Сбербанк", "Тинькофф", "ВТБ", "Альфа-Банк"};
+        String[] receiverBanks = {"Банк Открытие", "Газпромбанк", "Райффайзен"};
+        String[] statuses = {"Завершено", "В обработке", "Отменено"};
+        String[] transactionTypes = {"INCOME", "EXPENSE"};
 
-        // Transaction 3 (между пользователями)
-        Transaction t3 = new Transaction();
-        t3.setUser(users.get(2));
-        t3.setTransactionDate(LocalDateTime.now().minusDays(2));
-        t3.setTransactionType("test");
-        t3.setAmount(new BigDecimal("7500.00"));
-        t3.setStatus("В обработке");
-        t3.setCategory(categories.get(1));
-        t3.setSenderAccount("40817810222222222");
-        t3.setReceiverAccount("40817810333333333");
+        for (int i = 0; i < 30; i++) {
+            Transaction t = new Transaction();
+            t.setUser(users.get(i % users.size()));
+            t.setTransactionDate(LocalDateTime.now().minusDays(i));
 
-        // Transaction 5 (долгая транзакция)
-        Transaction t5 = new Transaction();
-        t5.setUser(users.get(1));
-        t5.setTransactionDate(LocalDateTime.of(2023, 10, 1, 9, 30));
-        t5.setTransactionType("test");
-        t5.setAmount(new BigDecimal("5432.10"));
-        t5.setStatus("Отменено");
-        t5.setComment("Ошибочный платеж");
-        t5.setSenderBank("Тинькофф");
-        t5.setSenderAccount("4081781044444444");
+            t.setTransactionType(transactionTypes[i % transactionTypes.length]);
+            t.setAmount(BigDecimal.valueOf(500 + i * 100));
+            t.setStatus(statuses[i % statuses.length]);
+            t.setComment("Тестовая транзакция №" + (i + 1));
 
-        transactionRepository.saveAll(List.of(t1, t2, t3, t5));
+            t.setSenderBank(senderBanks[i % senderBanks.length]);
+            t.setSenderAccount("40817810" + String.format("%07d", i));
+
+            t.setReceiverBank(receiverBanks[i % receiverBanks.length]);
+            t.setReceiverInn(String.format("%011d", 77000000000L + i));
+            t.setReceiverAccount("40702810" + String.format("%07d", i));
+
+            t.setReceiverPhone("+7" + String.format("%010d", 9000000000L + i));
+            t.setReceiverType(i % 2 == 0 ? "Физ.лицо" : "Юр.лицо");
+
+            t.setCategory(categories.get(i % categories.size()));
+
+            transactions.add(t);
+        }
+
+        transactionRepository.saveAll(transactions);
     }
 
     private void createReports(List<User> users) {
