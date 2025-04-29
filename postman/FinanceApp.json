@@ -12,12 +12,6 @@
         {
           "name": "Фильтрация по банку отправителя (Сбербанк)",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -36,12 +30,6 @@
         {
           "name": "Фильтрация по банку получателя (Газпромбанк)",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -60,12 +48,6 @@
         {
           "name": "Фильтрация по сумме от 1000 до 3000",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -84,12 +66,6 @@
         {
           "name": "Фильтрация по статусу (В обработке)",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -108,12 +84,6 @@
         {
           "name": "Фильтрация доходов за последние 10 дней",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -132,12 +102,6 @@
         {
           "name": "Фильтрация по ИНН",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -156,12 +120,6 @@
         {
           "name": "Фильтрация по категории (ID 1)",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-              }
-            },
             "method": "POST",
             "header": [
               {
@@ -180,14 +138,121 @@
       ]
     },
     {
+      "name": "smoke",
+      "item": [
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionDate\": \"21.04.2025 14:00\",\n  \"transactionType\": \"INCOME\",\n  \"amount\": 1000.00,\n  \"comment\": \"Создание\",\n  \"status\": \"NEW\",\n  \"senderBank\": \"Сбербанк\",\n  \"senderAccount\": \"40817810000000000001\",\n  \"receiverBank\": \"ВТБ\",\n  \"receiverInn\": \"12345678901\",\n  \"receiverAccount\": \"40702810900000001234\",\n  \"receiverPhone\": \"+79001234567\",\n  \"receiverType\": \"Физ.лицо\",\n  \"categoryId\": 1\n}"
+            },
+            "url": "http://localhost:8080/api/transactions"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:8080/api/transactions/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2222.22,\n  \"comment\": \"Обновлено\",\n  \"status\": \"PROCESSING\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:8080/api/transactions/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Transactions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderBank\": \"Сбербанк\",\n  \"amountFrom\": 500,\n  \"amountTo\": 3000\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/filter"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction History (all)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "http://localhost:8080/api/transactions/history"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction History (by period)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dateFrom\": \"20.04.2025 00:00\",\n  \"dateTo\": \"21.04.2025 23:59\"\n}"
+            },
+            "url": "http://localhost:8080/api/transactions/history"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "update transaction",
       "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": {
-            "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJuYW1lIjoidTEiLCJzdWIiOiJ1MSIsImlhdCI6MTc0NTc3NTQ1MCwiZXhwIjoxNzQ1OTE5NDUwfQ.gdCRsHemapAP0Zw8_bBOBWPtFjJf3wxs0JvLfm3oS9M"
-          }
-        },
         "method": "PUT",
         "header": [],
         "body": {
@@ -205,6 +270,20 @@
     },
     {
       "name": "login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set(\"access_token\", json.token);",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -220,6 +299,34 @@
         "url": "http://localhost:8080/api/auth/login"
       },
       "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": {
+      "token": "{{access_token}}"
+    }
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
     }
   ]
 }
