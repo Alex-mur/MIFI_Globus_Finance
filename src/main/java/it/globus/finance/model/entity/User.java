@@ -4,12 +4,15 @@ import it.globus.finance.model.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,6 +44,13 @@ public class User implements UserDetails {
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Getter
+    @Setter
+    @ElementCollection
+    @CollectionTable(name = "reports_file_names", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "tag")
+    private List<String> reportFileNames = new ArrayList<>();
 
     public User() {
     }
@@ -130,5 +140,17 @@ public class User implements UserDetails {
 
     public void setEnabled(Boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public void addReportFileName(String name) {
+        List<String> names = getReportFileNames();
+        names.add(name);
+        setReportFileNames(names);
+    }
+
+    public void removeReportFileName(String name) {
+        List<String> names = getReportFileNames();
+        names.remove(name);
+        setReportFileNames(names);
     }
 }

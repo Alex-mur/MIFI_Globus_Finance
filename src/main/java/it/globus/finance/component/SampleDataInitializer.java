@@ -4,11 +4,9 @@ package it.globus.finance.component;
 import it.globus.finance.model.CategoryType;
 import it.globus.finance.model.Role;
 import it.globus.finance.model.entity.Category;
-import it.globus.finance.model.entity.Report;
 import it.globus.finance.model.entity.Transaction;
 import it.globus.finance.model.entity.User;
 import it.globus.finance.model.repo.CategoryRepo;
-import it.globus.finance.model.repo.ReportRepo;
 import it.globus.finance.model.repo.TransactionRepo;
 import it.globus.finance.model.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +27,13 @@ public class SampleDataInitializer {
     private final UserRepo userRepository;
     private final CategoryRepo categoryRepository;
     private final TransactionRepo transactionRepository;
-    private final ReportRepo reportRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SampleDataInitializer(UserRepo userRepository, CategoryRepo categoryRepository, TransactionRepo transactionRepository, ReportRepo reportRepository, PasswordEncoder passwordEncoder) {
+    public SampleDataInitializer(UserRepo userRepository, CategoryRepo categoryRepository, TransactionRepo transactionRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.transactionRepository = transactionRepository;
-        this.reportRepository = reportRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -67,9 +63,6 @@ public class SampleDataInitializer {
 
         // Создание транзакций
         createTransactions(users, categories);
-
-        // Создание отчетов
-        createReports(users);
     }
 
     private User createUser(String username, String email, Role role) {
@@ -114,30 +107,5 @@ public class SampleDataInitializer {
         }
 
         transactionRepository.saveAll(transactions);
-    }
-
-    private void createReports(List<User> users) {
-        Report r1 = new Report(
-                users.get(0),
-                "{\"type\":\"monthly\", \"period\":\"2023-10\", \"categories\":[\"food\"]}",
-                LocalDateTime.now(),
-                "\\sdffe\\sdfweffew\\file1"
-        );
-
-        Report r2 = new Report(
-                users.get(1),
-                "{\"type\":\"custom\", \"dateRange\":{\"from\":\"2023-10-01\", \"to\":\"2023-10-31\"}}",
-                LocalDateTime.now(),
-                "\\sd32443tffe\\sdfweffew\\file2"
-        );
-
-        Report r3 = new Report(
-                users.get(2),
-                "{\"type\":\"annual\", \"year\":2023, \"format\":\"excel\"}",
-                LocalDateTime.now(),
-                "\\sdfuyi67u56fe\\sdfwe456y6yyffew\\file3"
-        );
-
-        reportRepository.saveAll(List.of(r1, r2, r3));
     }
 }
