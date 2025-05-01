@@ -189,7 +189,16 @@ function getFormData() {
     const formData = new FormData(form); // Собираем данные формы
     const filters = {};
     for (let [key, value] of formData.entries()) {
-        if (value) filters[key] = value; // Добавляем только непустые значения
+        if (value && value !== '') { // Добавляем только непустые значения
+            // Для числовых полей (amountFrom, amountTo, categoryId) преобразуем в соответствующий тип
+            if (['amountFrom', 'amountTo'].includes(key)) {
+                filters[key] = parseFloat(value);
+            } else if (key === 'categoryId') {
+                filters[key] = parseInt(value, 10);
+            } else {
+                filters[key] = value;
+            }
+        }
     }
     console.log('Извлечены фильтры:', filters); // Отладка
     return filters; // Возвращаем объект с фильтрами
@@ -467,7 +476,7 @@ function processStatusData(transactions, period) {
         return a.localeCompare(b); // Лексикографическая сортировка
     });
 
-    // Формируем данные для γραфика статуса
+    // Формируем данные для графика статуса
     const statusData = {
         labels: sortedPeriods, // Метки для графика
         datasets: [
