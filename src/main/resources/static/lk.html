@@ -123,6 +123,19 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Дашборды -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Динамика по количеству транзакций</h2>
+            <label for="transactionCountPeriodSelect">Период для поступлений:</label>
+            <select id="transactionCountPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="transactionCountChart"></canvas>
+        </div>
+
+
         <!-- График 1: Динамика транзакций -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Поступления</h2>
@@ -174,6 +187,32 @@
             </select>
             <canvas id="statusChart"></canvas>
         </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Статистика по банкам отправителей</h2>
+            <label for="senderBankPeriodSelect">Период для банков отправителей:</label>
+            <select id="senderBankPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="senderBankChart"></canvas>
+        </div>
+
+        <!-- График и селектор для банков получателей -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Статистика по банкам получателей</h2>
+            <label for="receiverBankPeriodSelect">Период для банков получателей:</label>
+            <select id="receiverBankPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="receiverBankChart"></canvas>
+        </div>
+
     </div>
     </div>
 </div>
