@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет - Finance App</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/chart.js"></script>
     <script src="js/tailwind.js"></script>
     <script src="js/auth.js" defer></script>
     <script src="js/dashboard.js"></script>
@@ -32,6 +32,7 @@
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h1 class="text-2xl font-bold mb-4">Добро пожаловать, <span id="usernameDisplay"></span>!</h1>
         <p class="text-gray-600">Вы авторизованы</p>
+        <a href="/report.html" class="inline-flex items-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Перейти к отчетам</a>
     </div>
 </div>
 
@@ -135,7 +136,6 @@
             <canvas id="transactionCountChart"></canvas>
         </div>
 
-
         <!-- График 1: Динамика транзакций -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Поступления</h2>
@@ -212,8 +212,6 @@
             </select>
             <canvas id="receiverBankChart"></canvas>
         </div>
-
-    </div>
     </div>
 </div>
 

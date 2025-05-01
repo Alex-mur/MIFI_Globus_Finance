@@ -26,6 +26,8 @@
                 <label for="dateTo" class="block text-sm font-medium text-gray-700">Дата до</label>
                 <input type="date" id="dateTo" name="dateTo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
+            <!-- Скрытое поле для JWT токена -->
+            <input type="hidden" id="jwtToken" name="jwtToken">
             <!-- Кнопка отправки -->
             <div class="sm:col-span-2 mt-4">
                 <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Сгенерировать отчет</button>
@@ -35,6 +37,9 @@
 
     <!-- Сообщения об ошибках/успехе -->
     <div id="message" class="hidden mb-6 p-4 rounded-md"></div>
+
+    <!-- Ссылка на личный кабинет -->
+    <a href="/lk.html" class="inline-flex items-center px-4 py-2 mb-6 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Вернуться в личный кабинет</a>
 
     <!-- Список отчетов -->
     <div class="bg-white p-6 rounded-lg shadow-md">
@@ -55,6 +60,15 @@
     const messageDiv = document.getElementById('message');
     const reportsList = document.getElementById('reportsList');
     const noReports = document.getElementById('noReports');
+    const jwtTokenInput = document.getElementById('jwtToken');
+
+    // Проверка авторизации
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        window.location.href = '/auth/login.html';
+    } else {
+        jwtTokenInput.value = token; // Устанавливаем токен в скрытое поле
+    }
 
     // Функция отображения сообщения
     function showMessage(text, isError = false) {
@@ -90,9 +104,17 @@
         try {
             clearMessage();
             const response = await fetch(`/api/reports/${filename}/download`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
             if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/auth/login';
+                    return;
+                }
                 throw new Error(`Ошибка скачивания: ${response.status} ${response.statusText}`);
             }
             const blob = await response.blob();
@@ -120,7 +142,9 @@
         const formData = new FormData(reportForm);
         const data = {};
         for (let [key, value] of formData.entries()) {
-            if (value) data[key] = value;
+            if (value && key !== 'jwtToken') { // Исключаем пустые значения, кроме jwtToken
+                data[key] = value;
+            }
         }
 
         // Валидация дат
@@ -132,10 +156,18 @@
         try {
             const response = await fetch('/api/reports/generate', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(data)
             });
             if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/auth/login';
+                    return;
+                }
                 throw new Error(`Ошибка генерации: ${response.status} ${response.statusText}`);
             }
             const result = await response.json();
