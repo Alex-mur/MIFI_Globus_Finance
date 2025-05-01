@@ -164,7 +164,14 @@
 
         <!-- График 4: Статусы транзакций -->
         <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-semibold mb-4">Transaction Status</h2>
+            <h2 class="text-xl font-semibold mb-4">Динамика по статусам</h2>
+            <label for="statusPeriodSelect">Период для сравнения:</label>
+            <select id="statusPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
             <canvas id="statusChart"></canvas>
         </div>
     </div>

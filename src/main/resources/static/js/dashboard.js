@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const incomePeriod = e.target.value; // Получаем период для поступлений
             const expensePeriod = document.getElementById('expensePeriodSelect')?.value || 'month'; // Текущий период для списаний
             const comparisonPeriod = document.getElementById('comparisonPeriodSelect')?.value || 'month'; // Текущий период для сравнения
+            const statusPeriod = document.getElementById('statusPeriodSelect')?.value || 'month'; // Текущий период для статуса
             console.log(`Изменен период для поступлений: ${incomePeriod}`); // Отладка
-            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod); // Загружаем данные
+            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod, statusPeriod); // Загружаем данные
         });
     } else {
         console.error('Элемент incomePeriodSelect не найден'); // Отладка
@@ -49,8 +50,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const expensePeriod = e.target.value; // Получаем период для списаний
             const incomePeriod = document.getElementById('incomePeriodSelect')?.value || 'month'; // Текущий период для поступлений
             const comparisonPeriod = document.getElementById('comparisonPeriodSelect')?.value || 'month'; // Текущий период для сравнения
+            const statusPeriod = document.getElementById('statusPeriodSelect')?.value || 'month'; // Текущий период для статуса
             console.log(`Изменен период для списаний: ${expensePeriod}`); // Отладка
-            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod); // Загружаем данные
+            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod, statusPeriod); // Загружаем данные
         });
     } else {
         console.error('Элемент expensePeriodSelect не найден'); // Отладка
@@ -63,16 +65,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             const comparisonPeriod = e.target.value; // Получаем период для сравнения
             const incomePeriod = document.getElementById('incomePeriodSelect')?.value || 'month'; // Текущий период для поступлений
             const expensePeriod = document.getElementById('expensePeriodSelect')?.value || 'month'; // Текущий период для списаний
+            const statusPeriod = document.getElementById('statusPeriodSelect')?.value || 'month'; // Текущий период для статуса
             console.log(`Изменен период для сравнения: ${comparisonPeriod}`); // Отладка
-            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod); // Загружаем данные
+            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod, statusPeriod); // Загружаем данные
         });
     } else {
         console.error('Элемент comparisonPeriodSelect не найден'); // Отладка
     }
+
+    // Обработчик изменения периода для графика статуса транзакций
+    const statusPeriodSelect = document.getElementById('statusPeriodSelect');
+    if (statusPeriodSelect) {
+        statusPeriodSelect.addEventListener('change', async (e) => {
+            const statusPeriod = e.target.value; // Получаем период для статуса
+            const incomePeriod = document.getElementById('incomePeriodSelect')?.value || 'month'; // Текущий период для поступлений
+            const expensePeriod = document.getElementById('expensePeriodSelect')?.value || 'month'; // Текущий период для списаний
+            const comparisonPeriod = document.getElementById('comparisonPeriodSelect')?.value || 'month'; // Текущий период для сравнения
+            console.log(`Изменен период для статуса: ${statusPeriod}`); // Отладка
+            await loadAnalyticsData(getFormData(), incomePeriod, expensePeriod, comparisonPeriod, statusPeriod); // Загружаем данные
+        });
+    } else {
+        console.error('Элемент statusPeriodSelect не найден'); // Отладка
+    }
 });
 
 // Функция загрузки аналитических данных с сервера
-async function loadAnalyticsData(filters = {}, incomePeriod = 'month', expensePeriod = 'month', comparisonPeriod = 'month') {
+async function loadAnalyticsData(filters = {}, incomePeriod = 'month', expensePeriod = 'month', comparisonPeriod = 'month', statusPeriod = 'month') {
     try {
         console.log('Загрузка данных с фильтрами:', filters); // Отладка
         const url = '/api/transactions/filter'; // URL для получения транзакций
@@ -89,7 +107,7 @@ async function loadAnalyticsData(filters = {}, incomePeriod = 'month', expensePe
         const data = await response.json(); // Парсим JSON-ответ
         console.log('Получены данные:', data); // Отладка: проверяем данные
 
-        renderCharts(data, incomePeriod, expensePeriod, comparisonPeriod); // Рендерим все графики
+        renderCharts(data, incomePeriod, expensePeriod, comparisonPeriod, statusPeriod); // Рендерим все графики
     } catch (error) {
         console.error('Ошибка загрузки аналитики:', error); // Логируем ошибки
     }
@@ -213,7 +231,7 @@ function processTransactionData(transactions, period) {
     return { incomeData, expenseData }; // Возвращаем данные для графиков
 }
 
-// Новая функция обработки данных для графика сравнения сумм
+// Функция обработки данных для графика сравнения сумм
 function processComparisonData(transactions, period) {
     console.log(`Обработка данных для сравнения сумм, период: ${period}`); // Отладка
     const amountsByType = {
@@ -311,29 +329,130 @@ function processComparisonData(transactions, period) {
     return comparisonData; // Возвращаем данные для графика сравнения
 }
 
+// Функция обработки данных для графика статуса транзакций
+function processStatusData(transactions, period) {
+    console.log(`Обработка данных для статуса транзакций, период: ${period}`); // Отладка
+    const countsByStatus = {
+        'Платеж выполнен': {},
+        'Отменена': {}
+    }; // Объект для хранения счетчиков по статусу
+    const formatter = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }); // Форматтер для дат
+
+    // Фильтруем и группируем транзакции по статусу "Платеж выполнен" и "Отменена"
+    transactions.forEach(transaction => {
+        const status = transaction.status; // Исправлено: используем transaction.status
+        if (status !== 'Платеж выполнен' && status !== 'Отменена') return; // Пропускаем неподходящие статусы
+
+        const dateStr = transaction.transactionDate;
+        if (!dateStr) {
+            console.warn('Транзакция без даты:', transaction); // Отладка
+            return;
+        }
+
+        let date;
+        try {
+            date = new Date(dateStr); // Преобразуем дату транзакции
+            if (isNaN(date.getTime())) {
+                throw new Error('Некорректная дата');
+            }
+        } catch (error) {
+            console.warn(`Ошибка парсинга даты в транзакции: ${dateStr}`, transaction); // Отладка
+            return;
+        }
+
+        let key; // Ключ для периода
+        // Определяем ключ в зависимости от выбранного периода
+        switch (period) {
+            case 'week':
+                // Начало недели (понедельник)
+                const weekStart = new Date(date);
+                weekStart.setDate(date.getDate() - (date.getDay() || 7) + 1);
+                key = weekStart.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric', year: 'numeric' });
+                break;
+            case 'month':
+                key = formatter.format(date); // Форматируем как "месяц год"
+                break;
+            case 'quarter':
+                const quarter = Math.ceil((date.getMonth() + 1) / 3); // Определяем квартал
+                key = `${quarter} квартал ${date.getFullYear()}`; // Формируем ключ
+                break;
+            case 'year':
+                key = date.getFullYear().toString(); // Год как строка
+                break;
+            default:
+                console.warn(`Неподдерживаемый период: ${period}`); // Отладка
+                return;
+        }
+
+        countsByStatus[status][key] = (countsByStatus[status][key] || 0) + 1; // Увеличиваем счетчик
+    });
+
+    // Собираем все уникальные периоды
+    const allPeriods = new Set();
+    Object.values(countsByStatus).forEach(counts => {
+        Object.keys(counts).forEach(period => allPeriods.add(period)); // Добавляем все периоды
+    });
+
+    // Сортируем периоды для корректного отображения
+    const sortedPeriods = Array.from(allPeriods).sort((a, b) => {
+        if (period === 'week') {
+            return new Date(a) - new Date(b); // Сортировка по дате для недель
+        }
+        return a.localeCompare(b); // Лексикографическая сортировка
+    });
+
+    // Формируем данные для графика статуса
+    const statusData = {
+        labels: sortedPeriods, // Метки для графика
+        datasets: [
+            {
+                label: 'Платеж выполнен',
+                data: sortedPeriods.map(period => countsByStatus['Платеж выполнен'][period] || 0), // Количество проведенных
+                backgroundColor: 'rgba(54, 162, 235, 0.8)', // Цвет столбцов
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Отменена',
+                data: sortedPeriods.map(period => countsByStatus['Отменена'][period] || 0), // Количество отмененных
+                backgroundColor: 'rgba(255, 159, 64, 0.8)', // Цвет столбцов
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    console.log('Обработанные данные для статуса:', statusData); // Отладка
+    return statusData; // Возвращаем данные для графика статуса
+}
+
 let incomeChart = null; // Переменная для графика поступлений
 let expenseChart = null; // Переменная для графика списаний
 let comparisonChart = null; // Переменная для графика сравнения
+let statusChart = null; // Переменная для графика статуса
 
 // Функция рендеринга всех графиков
-function renderCharts(data, incomePeriod = 'month', expensePeriod = 'month', comparisonPeriod = 'month') {
+function renderCharts(data, incomePeriod = 'month', expensePeriod = 'month', comparisonPeriod = 'month', statusPeriod = 'month') {
     // Проверяем наличие всех canvas элементов
     const incomeCanvas = document.getElementById('incomeChart');
     const expenseCanvas = document.getElementById('expenseChart');
     const comparisonCanvas = document.getElementById('comparisonChart');
-    if (!incomeCanvas || !expenseCanvas || !comparisonCanvas) {
-        console.error('Один или несколько canvas не найдены:', { incomeCanvas, expenseCanvas, comparisonCanvas }); // Отладка
+    const statusCanvas = document.getElementById('statusChart');
+    if (!incomeCanvas || !expenseCanvas || !comparisonCanvas || !statusCanvas) {
+        console.error('Один или несколько canvas не найдены:', { incomeCanvas, expenseCanvas, comparisonCanvas, statusCanvas }); // Отладка
         return;
     }
 
     const incomeCtx = incomeCanvas.getContext('2d'); // Контекст для поступлений
     const expenseCtx = expenseCanvas.getContext('2d'); // Контекст для списаний
     const comparisonCtx = comparisonCanvas.getContext('2d'); // Контекст для сравнения
+    const statusCtx = statusCanvas.getContext('2d'); // Контекст для статуса
 
     // Обрабатываем данные для каждого графика
     const incomeProcessedData = processTransactionData(data, incomePeriod);
     const expenseProcessedData = processTransactionData(data, expensePeriod);
     const comparisonProcessedData = processComparisonData(data, comparisonPeriod);
+    const statusProcessedData = processStatusData(data, statusPeriod);
 
     // Уничтожаем предыдущие графики
     if (incomeChart) {
@@ -345,8 +464,11 @@ function renderCharts(data, incomePeriod = 'month', expensePeriod = 'month', com
     if (comparisonChart) {
         comparisonChart.destroy();
     }
+    if (statusChart) {
+        statusChart.destroy();
+    }
 
-    console.log('Рендеринг графиков:', { incomePeriod, expensePeriod, comparisonPeriod }); // Отладка
+    console.log('Рендеринг графиков:', { incomePeriod, expensePeriod, comparisonPeriod, statusPeriod }); // Отладка
 
     // Создаем график для поступлений (по количеству транзакций)
     incomeChart = new Chart(incomeCtx, {
@@ -467,6 +589,49 @@ function renderCharts(data, incomePeriod = 'month', expensePeriod = 'month', com
                 title: {
                     display: true,
                     text: 'Сравнение количества поступивших средств и потраченных' // Заголовок графика
+                }
+            },
+            interaction: {
+                mode: 'nearest', // Взаимодействие с ближайшей точкой
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+
+    // Создаем график для статуса транзакций (проведенные и отмененные)
+    statusChart = new Chart(statusCtx, {
+        type: 'bar', // Тип графика - столбчатый
+        data: statusProcessedData, // Данные для статуса
+        options: {
+            responsive: true, // График адаптируется к размеру контейнера
+            scales: {
+                y: {
+                    beginAtZero: true, // Ось Y начинается с нуля
+                    title: {
+                        display: true,
+                        text: 'Количество транзакций' // Подпись оси Y
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Период' // Подпись оси X
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top' // Легенда сверху
+                },
+                tooltip: {
+                    mode: 'index', // Всплывающие подсказки для всех столбцов в периоде
+                    intersect: false
+                },
+                title: {
+                    display: true,
+                    text: 'Количество проведенных транзакций и отмененных транзакций' // Заголовок графика
                 }
             },
             interaction: {
