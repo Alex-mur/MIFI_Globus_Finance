@@ -1,8 +1,10 @@
 package it.globus.finance.rest.controller;
 
 import it.globus.finance.model.entity.Transaction;
+import it.globus.finance.model.entity.TransactionHistory;
 import it.globus.finance.rest.dto.TransactionCreateRequest;
 import it.globus.finance.rest.dto.TransactionFilterRequest;
+import it.globus.finance.rest.dto.TransactionHistoryFilterRequest;
 import it.globus.finance.rest.dto.TransactionUpdateRequest;
 import it.globus.finance.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,7 +24,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> createTransaction(
             @RequestBody @Valid TransactionCreateRequest request) {
         try {
@@ -43,14 +45,15 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTransaction(
-            @PathVariable Long id) {
+    public ResponseEntity<?> deleteTransaction(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(transactionService.deleteTransaction(id));
+            transactionService.deleteTransaction(id);
+            return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
@@ -68,4 +71,12 @@ public class TransactionController {
         List<Transaction> filtered = transactionService.filterTransactions(request);
         return ResponseEntity.ok(filtered);
     }
+
+    @PostMapping("/history")
+    public ResponseEntity<List<TransactionHistory>> getTransactionHistory(
+            @RequestBody @Valid TransactionHistoryFilterRequest request) {
+        List<TransactionHistory> history = transactionService.getTransactionHistory(request);
+        return ResponseEntity.ok(history);
+    }
+
 }
