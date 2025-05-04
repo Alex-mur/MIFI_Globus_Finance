@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление отчетами</title>
+    <!-- Подключение Tailwind CSS через CDN -->
+    <script src="js/tailwind.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-4xl mx-auto">
+    <!-- Заголовок -->
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">Генерация и скачивание отчетов</h1>
+
+    <!-- Форма генерации отчета -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700">Создать новый отчет</h2>
+        <form id="reportForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Дата от -->
+            <div>
+                <label for="dateFrom" class="block text-sm font-medium text-gray-700">Дата от</label>
+                <input type="date" id="dateFrom" name="dateFrom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <!-- Дата до -->
+            <div>
+                <label for="dateTo" class="block text-sm font-medium text-gray-700">Дата до</label>
+                <input type="date" id="dateTo" name="dateTo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <!-- Скрытое поле для JWT токена -->
+            <input type="hidden" id="jwtToken" name="jwtToken">
+            <!-- Кнопка отправки -->
+            <div class="sm:col-span-2 mt-4">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Сгенерировать отчет</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Сообщения об ошибках/успехе -->
+    <div id="message" class="hidden mb-6 p-4 rounded-md"></div>
+
+    <!-- Ссылка на личный кабинет -->
+    <a href="/lk.html" class="inline-flex items-center px-4 py-2 mb-6 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Вернуться в личный кабинет</a>
+
+    <!-- Список отчетов -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700">Сгенерированные отчеты</h2>
+        <div id="reportsList" class="space-y-4">
+            <!-- Список отчетов будет добавляться динамически -->
+            <p id="noReports" class="text-gray-500">Нет сгенерированных отчетов</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Массив для хранения сгенерированных отчетов
+    let reports = [];
+
+    // Получение элементов DOM
+    const reportForm = document.getElementById('reportForm');
+    const messageDiv = document.getElementById('message');
+    const reportsList = document.getElementById('reportsList');
+    const noReports = document.getElementById('noReports');
+    const jwtTokenInput = document.getElementById('jwtToken');
+
+    // Проверка авторизации
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        window.location.href = '/auth/login.html';
+    } else {
+        jwtTokenInput.value = token; // Устанавливаем токен в скрытое поле
+    }
+
+    // Функция отображения сообщения
+    function showMessage(text, isError = false) {
+        messageDiv.textContent = text;
+        messageDiv.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+        messageDiv.classList.add(isError ? 'bg-red-100' : 'bg-green-100', isError ? 'text-red-700' : 'text-green-700');
+    }
+
+    // Функция очистки сообщения
+    function clearMessage() {
+        messageDiv.classList.add('hidden');
+        messageDiv.textContent = '';
+    }
+
+    // Функция обновления списка отчетов
+    function updateReportsList() {
+        if (reports.length === 0) {
+            noReports.classList.remove('hidden');
+            reportsList.innerHTML = '';
+            return;
+        }
+        noReports.classList.add('hidden');
+        reportsList.innerHTML = reports.map(filename => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                    <span class="text-sm text-gray-700">${filename}</span>
+                    <button onclick="downloadReport('${filename}')" class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Скачать</button>
+                </div>
+            `).join('');
+    }
+
+    // Функция скачивания отчета
+    async function downloadReport(filename) {
+        try {
+            clearMessage();
+            const response = await fetch(`/api/reports/${filename}/download`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                throw new Error(`Ошибка скачивания: ${response.status} ${response.statusText}`);
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            showMessage(`Отчет ${filename} успешно скачан`, false);
+        } catch (error) {
+            console.error('Ошибка скачивания отчета:', error);
+            showMessage(`Не удалось скачать отчет: ${error.message}`, true);
+        }
+    }
+
+    // Обработчик отправки формы
+    reportForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessage();
+
+        // Собираем данные формы
+        const formData = new FormData(reportForm);
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            if (value && key !== 'jwtToken') { // Исключаем пустые значения, кроме jwtToken
+                data[key] = value;
+            }
+        }
+
+        // Валидация дат
+        if (data.dateFrom && data.dateTo && new Date(data.dateTo) < new Date(data.dateFrom)) {
+            showMessage('Дата "до" не может быть раньше даты "от"', true);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/reports/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                throw new Error(`Ошибка генерации: ${response.status} ${response.statusText}`);
+            }
+            const result = await response.json();
+            if (!result.filename) {
+                throw new Error('API не вернул имя файла');
+            }
+            reports.push(result.filename);
+            updateReportsList();
+            showMessage(`Отчет ${result.filename} успешно сгенерирован`, false);
+        } catch (error) {
+            console.error('Ошибка генерации отчета:', error);
+            showMessage(`Не удалось сгенерировать отчет: ${error.message}`, true);
+        }
+    });
+
+    // Инициализация списка отчетов
+    updateReportsList();
+</script>
+</body>
+</html>
