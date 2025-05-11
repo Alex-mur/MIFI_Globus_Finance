@@ -1,5 +1,12 @@
 // Слушатель события загрузки DOM, инициализирует загрузку данных и привязывает обработчики событий
 document.addEventListener('DOMContentLoaded', async () => {
+    const authToken = localStorage.getItem('jwtToken');
+    if (!authToken) {
+        console.error('JWT токен не найден в localStorage');
+        window.location.href = '/auth/login.html';
+        return;
+    }
+
     console.log('DOM загружен, инициализация дашбордов'); // Отладка: проверяем запуск
     // Загружаем аналитические данные без фильтров при открытии страницы
     await loadAnalyticsData();
@@ -160,9 +167,10 @@ async function loadAnalyticsData(filters = {}, incomePeriod = 'month', expensePe
     try {
         console.log('Загрузка данных с фильтрами:', filters); // Отладка
         const url = '/api/transactions/filter'; // URL для получения транзакций
+        const authToken = localStorage.getItem('jwtToken');
         const options = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',  'Authorization': `Bearer ${authToken}`},
             body: JSON.stringify(filters) // Отправляем фильтры в теле запроса
         };
 
@@ -190,12 +198,55 @@ function getFormData() {
     const filters = {};
     for (let [key, value] of formData.entries()) {
         if (value && value !== '') { // Добавляем только непустые значения
-            // Для числовых полей (amountFrom, amountTo, categoryId) преобразуем в соответствующий тип
-            if (['amountFrom', 'amountTo'].includes(key)) {
+            // Для дат (dateFrom, dateTo) преобразуем в формат DD.MM.YYYY HH:mm
+            if (key === 'dateFrom' || key === 'dateTo') {
+                try {
+                    const date = new Date(value);
+                    if (!isNaN(date.getTime())) {
+                        // Устанавливаем время: 00:00 для dateFrom, 23:59 для dateTo
+                        if (key === 'dateTo') {
+                            date.setHours(23, 59);
+                        } else {
+                            date.setHours(0, 0);
+                        }
+                        // Форматируем дату в DD.MM.YYYY HH:mm
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        filters[key] = `${day}.${month}.${year} ${hours}:${minutes}`;
+                    } else {
+                        console.warn(`Некорректная дата для ${key}: ${value}`);
+                    }
+                } catch (error) {
+                    console.warn(`Ошибка обработки даты для ${key}: ${value}`, error);
+                }
+            } else if (key === 'dateExact') {
+                let date = new Date(value);
+                if (!isNaN(date.getTime())) {
+                    date.setHours(0, 0);
+                    let day = String(date.getDate()).padStart(2, '0');
+                    let month = String(date.getMonth() + 1).padStart(2, '0');
+                    let year = date.getFullYear();
+                    let hours = String(date.getHours()).padStart(2, '0');
+                    let minutes = String(date.getMinutes()).padStart(2, '0');
+
+                    filters['dateFrom'] = `${day}.${month}.${year} ${hours}:${minutes}`;
+
+                    date.setHours(23, 59);
+                    hours = String(date.getHours()).padStart(2, '0');
+                    minutes = String(date.getMinutes()).padStart(2, '0');
+                    filters['dateTo'] = `${day}.${month}.${year} ${hours}:${minutes}`;
+                }
+            } else if (['amountFrom', 'amountTo'].includes(key)) {
+                // Для числовых полей (amountFrom, amountTo) преобразуем в число
                 filters[key] = parseFloat(value);
             } else if (key === 'categoryId') {
+                // Для categoryId преобразуем в целое число
                 filters[key] = parseInt(value, 10);
             } else {
+                // Для остальных полей сохраняем как есть
                 filters[key] = value;
             }
         }
@@ -208,15 +259,15 @@ function getFormData() {
 function processTransactionData(transactions, period) {
     console.log(`Обработка данных для периода: ${period}`); // Отладка
     const countsByType = {
-        'Поступление': {},
-        'Списание': {}
+        'INCOME': {},
+        'EXPENSE': {}
     }; // Объект для хранения счетчиков
     const formatter = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }); // Форматтер для дат
 
-    // Фильтруем и группируем транзакции только для "Поступление" и "Списание"
+    // Фильтруем и группируем транзакции только для "INCOME" и "EXPENSE"
     transactions.forEach(transaction => {
         const type = transaction.transactionType;
-        if (type !== 'Поступление' && type !== 'Списание') return; // Пропускаем неподходящие типы
+        if (type !== 'INCOME' && type !== 'EXPENSE') return; // Пропускаем неподходящие типы
 
         const dateStr = transaction.transactionDate;
         if (!dateStr) {
@@ -281,7 +332,7 @@ function processTransactionData(transactions, period) {
         labels: sortedPeriods, // Метки для графика
         datasets: [{
             label: 'Поступление',
-            data: sortedPeriods.map(period => countsByType['Поступление'][period] || 0), // Данные
+            data: sortedPeriods.map(period => countsByType['INCOME'][period] || 0), // Данные
             borderColor: 'rgba(75, 192, 192, 1)', // Цвет линии
             backgroundColor: 'rgba(75, 192, 192, 0.2)', // Цвет заливки
             fill: true, // Включаем заливку
@@ -294,7 +345,7 @@ function processTransactionData(transactions, period) {
         labels: sortedPeriods, // Метки для графика
         datasets: [{
             label: 'Списание',
-            data: sortedPeriods.map(period => countsByType['Списание'][period] || 0), // Данные
+            data: sortedPeriods.map(period => countsByType['EXPENSE'][period] || 0), // Данные
             borderColor: 'rgba(255, 99, 132, 1)', // Цвет линии
             backgroundColor: 'rgba(255, 99, 132, 0.2)', // Цвет заливки
             fill: true, // Включаем заливку
@@ -310,15 +361,15 @@ function processTransactionData(transactions, period) {
 function processComparisonData(transactions, period) {
     console.log(`Обработка данных для сравнения сумм, период: ${period}`); // Отладка
     const amountsByType = {
-        'Поступление': {},
-        'Списание': {}
+        'INCOME': {},
+        'EXPENSE': {}
     }; // Объект для хранения сумм
     const formatter = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }); // Форматтер для дат
 
-    // Фильтруем и группируем транзакции по суммам для "Поступление" и "Списание"
+    // Фильтруем и группируем транзакции по суммам для "INCOME" и "EXPENSE"
     transactions.forEach(transaction => {
         const type = transaction.transactionType;
-        if (type !== 'Поступление' && type !== 'Списание') return; // Пропускаем неподходящие типы
+        if (type !== 'INCOME' && type !== 'EXPENSE') return; // Пропускаем неподходящие типы
 
         const dateStr = transaction.transactionDate;
         const amount = transaction.amount;
@@ -385,14 +436,14 @@ function processComparisonData(transactions, period) {
         datasets: [
             {
                 label: 'Поступление',
-                data: sortedPeriods.map(period => amountsByType['Поступление'][period] || 0), // Суммы поступлений
+                data: sortedPeriods.map(period => amountsByType['INCOME'][period] || 0), // Суммы поступлений
                 backgroundColor: 'rgba(75, 192, 192, 0.8)', // Цвет столбцов
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             },
             {
                 label: 'Списание',
-                data: sortedPeriods.map(period => amountsByType['Списание'][period] || 0), // Суммы списаний
+                data: sortedPeriods.map(period => amountsByType['EXPENSE'][period] || 0), // Суммы списаний
                 backgroundColor: 'rgba(255, 99, 132, 0.8)', // Цвет столбцов
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
