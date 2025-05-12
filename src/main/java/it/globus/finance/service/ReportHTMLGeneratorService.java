@@ -6,6 +6,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,8 +22,8 @@ public class ReportHTMLGeneratorService {
 
     public String generateHtmlReport(List<Transaction> transactions,
                                      String title,
-                                     LocalDateTime fromDate,
-                                     LocalDateTime toDate) {
+                                     LocalDate fromDate,
+                                     LocalDate toDate) {
 
         Context context = new Context();
 
@@ -31,13 +32,13 @@ public class ReportHTMLGeneratorService {
 
         String fromDateString = "...";
         if (fromDate != null) {
-            fromDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            fromDateString = fromDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         }
         context.setVariable("fromDate", fromDateString);
 
         String toDateString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         if (toDate != null) {
-            toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            toDateString = toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         }
         context.setVariable("toDate", toDateString);
         context.setVariable("now", LocalDateTime.now());
