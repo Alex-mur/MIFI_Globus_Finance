@@ -1,20 +1,11 @@
 package it.globus.finance.model.entity;
 
-import lombok.Getter;
-
-@Getter
-public enum Status {
-    NEW("Новая"),
-    CONFIRMED("Подтвержденная"),
-    PROCESSING("В обработке"),
-    CANCELED("Отменена"),
-    PAYMENT_COMPLETED("Платеж выполнен"),
-    PAYMENT_DELETED("Платеж удален"),
-    REFUNDED("Возврат");
-
-    private final String displayName;
-
-    Status(String displayName) {
-        this.displayName = displayName;
-    }
+public interface Status {
+    String NEW = "Новая";
+    String CONFIRMED = "Подтвержденная";
+    String PROCESSING = "В обработке";
+    String CANCELED = "Отменена";
+    String PAYMENT_COMPLETED = "Платеж выполнен";
+    String PAYMENT_DELETED = "Платеж удален";
+    String REFUNDED = "Возврат";
 }

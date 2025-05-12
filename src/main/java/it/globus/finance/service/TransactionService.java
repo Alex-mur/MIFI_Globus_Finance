@@ -1,10 +1,7 @@
 package it.globus.finance.service;
 
 import it.globus.finance.configuration.exception.RequestException;
-import it.globus.finance.model.entity.Category;
-import it.globus.finance.model.entity.Transaction;
-import it.globus.finance.model.entity.TransactionHistory;
-import it.globus.finance.model.entity.User;
+import it.globus.finance.model.entity.*;
 import it.globus.finance.model.repo.CategoryRepo;
 import it.globus.finance.model.repo.TransactionHistoryRepo;
 import it.globus.finance.model.repo.TransactionRepo;
@@ -25,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Service
@@ -39,6 +37,15 @@ public class TransactionService {
     private final EntityManager entityManager;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+    private final List<String> notModifiable = List.of(
+            Status.CONFIRMED,
+            Status.CANCELED,
+            Status.PROCESSING,
+            Status.PAYMENT_COMPLETED,
+            Status.REFUNDED,
+            Status.PAYMENT_DELETED
+    );
 
     public TransactionService(TransactionRepo transactionRepo,
                               CategoryRepo categoryRepo,
@@ -70,6 +77,9 @@ public class TransactionService {
 
         checkUserAccess(transaction);
 
+        if (notModifiable.contains(transaction.getStatus()))
+            throw new RequestException("Обновление транзакции запрещено для статуса: " + transaction.getStatus());
+
         fillTransactionDataOnUpdate(transaction, request);
         transaction.setUpdatedAt(LocalDateTime.now());
         transactionRepo.save(transaction);
@@ -83,15 +93,16 @@ public class TransactionService {
 
         checkUserAccess(transaction);
 
-        if (transaction.getStatus().equalsIgnoreCase("CONFIRMED") ||
-                transaction.getStatus().equalsIgnoreCase("CANCELED")) {
-            throw new RequestException("Удаление завершенной транзакции запрещено");
-        }
+        if (notModifiable.contains(transaction.getStatus()))
+            throw new RequestException("Удаление транзакции запрещено для статуса: " + transaction.getStatus());
 
         saveDeleteHistory(transaction);
 
-        transactionRepo.delete(transaction);
+        transaction.setStatus(Status.PAYMENT_DELETED);
+        transaction.setUpdatedAt(LocalDateTime.now());
+        transactionRepo.save(transaction);
     }
+
 
     @Transactional(readOnly = true)
     public Transaction getTransaction(Long id) {
@@ -99,8 +110,13 @@ public class TransactionService {
                 .orElseThrow(() -> new RequestException("Транзакция не найдена"));
 
         checkUserAccess(transaction);
+
+        if (Objects.equals(transaction.getStatus(), Status.PAYMENT_DELETED))
+            throw new RequestException("Транзакция была удалена");
+
         return transaction;
     }
+
 
     @Transactional(readOnly = true)
     public List<Transaction> filterTransactions(TransactionFilterRequest request) {
@@ -156,7 +172,7 @@ public class TransactionService {
         applyIfPresent(request.getCategoryId(), categoryId ->
                 predicates.add(cb.equal(transaction.get("category").get("id"), categoryId))
         );
-
+        predicates.add(cb.notEqual(transaction.get("status"), Status.PAYMENT_DELETED));
         query.select(transaction).where(cb.and(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(query).getResultList();
     }
