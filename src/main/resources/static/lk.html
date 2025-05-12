@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - Finance App</title>
+    <script src="js/chart.js"></script>
+    <script src="js/tailwind.js"></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/dashboard.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-xl font-bold text-blue-600">Finance App</span>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <button id="logoutBtn"
+                        class="px-4 py-2 text-sm text-red-600 hover:text-red-800">
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Добро пожаловать, <span id="usernameDisplay"></span>!</h1>
+        <p class="text-gray-600">Вы авторизованы</p>
+        <a href="/report.html" class="inline-flex items-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Перейти к отчетам</a>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <form id="filterForm" method="post" class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700">Фильтры</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Банк отправителя -->
+            <div>
+                <label for="senderBank" class="block text-sm font-medium text-gray-700">Банк отправителя</label>
+                <input type="text" id="senderBank" name="senderBank" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Например, Сбербанк">
+            </div>
+            <!-- Банк получателя -->
+            <div>
+                <label for="receiverBank" class="block text-sm font-medium text-gray-700">Банк получателя</label>
+                <input type="text" id="receiverBank" name="receiverBank" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Например, Тинькофф">
+            </div>
+            <!-- Конкретная дата -->
+            <div>
+                <label for="dateExact" class="block text-sm font-medium text-gray-700">Конкретная дата</label>
+                <input type="date" id="dateExact" name="dateExact" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <!-- Дата от -->
+            <div>
+                <label for="dateFrom" class="block text-sm font-medium text-gray-700">Дата от</label>
+                <input type="date" id="dateFrom" name="dateFrom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <!-- Дата до -->
+            <div>
+                <label for="dateTo" class="block text-sm font-medium text-gray-700">Дата до</label>
+                <input type="date" id="dateTo" name="dateTo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <!-- Статус -->
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700">Статус</label>
+                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">Выберите статус</option>
+                    <option value="Проведена">Проведена</option>
+                    <option value="Подтвержденная">Подтвержденная</option>
+                    <option value="В обработке">В обработке</option>
+                    <option value="Отменена">Отменена</option>
+                    <option value="Платеж выполнен">Платеж выполнен</option>
+                    <option value="Платеж удален">Платеж удален</option>
+                    <option value="Возврат">Возврат</option>
+                </select>
+            </div>
+            <!-- ИНН получателя -->
+            <div>
+                <label for="receiverInn" class="block text-sm font-medium text-gray-700">ИНН получателя</label>
+                <input type="text" id="receiverInn" name="receiverInn" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Например, 1234567890">
+            </div>
+            <!-- Сумма от -->
+            <div>
+                <label for="amountFrom" class="block text-sm font-medium text-gray-700">Сумма от (руб.)</label>
+                <input type="number" id="amountFrom" name="amountFrom" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Например, 1000.00">
+            </div>
+            <!-- Сумма до -->
+            <div>
+                <label for="amountTo" class="block text-sm font-medium text-gray-700">Сумма до (руб.)</label>
+                <input type="number" id="amountTo" name="amountTo" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Например, 5000.00">
+            </div>
+            <!-- Тип операции -->
+            <div>
+                <label for="transactionType" class="block text-sm font-medium text-gray-700">Тип операции</label>
+                <select id="transactionType" name="transactionType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">Выберите тип</option>
+                    <option value="INCOME">Поступление</option>
+                    <option value="EXPENSE">Списание</option>
+                </select>
+            </div>
+            <!-- Категория -->
+            <div>
+                <label for="categoryId" class="block text-sm font-medium text-gray-700">Категория</label>
+                <input type="text" id="categoryId" name="categoryId" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Введите id категории">
+            </div>
+        </div>
+        <div class="mt-6 flex space-x-4">
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Применить</button>
+            <button type="button" id="resetFilters" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Сбросить фильтры</button>
+        </div>
+    </form>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Дашборды -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Динамика по количеству транзакций</h2>
+            <label for="transactionCountPeriodSelect">Период для поступлений:</label>
+            <select id="transactionCountPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="transactionCountChart"></canvas>
+        </div>
+
+        <!-- График 1: Динамика транзакций -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Поступления</h2>
+            <label for="incomePeriodSelect">Период для поступлений:</label>
+            <select id="incomePeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="incomeChart"></canvas>
+        </div>
+
+        <!-- График 2: Дебет/Кредит -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Списания</h2>
+            <label for="expensePeriodSelect">Период для списаний:</label>
+            <select id="expensePeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="expenseChart"></canvas>
+        </div>
+
+        <!-- График 3: Поступления/Расходы -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Поступления/списания</h2>
+            <label for="comparisonPeriodSelect">Период для сравнения:</label>
+            <select id="comparisonPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+
+        <!-- График 4: Статусы транзакций -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Динамика по статусам</h2>
+            <label for="statusPeriodSelect">Период для сравнения:</label>
+            <select id="statusPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="statusChart"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Статистика по банкам отправителей</h2>
+            <label for="senderBankPeriodSelect">Период для банков отправителей:</label>
+            <select id="senderBankPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="senderBankChart"></canvas>
+        </div>
+
+        <!-- График и селектор для банков получателей -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Статистика по банкам получателей</h2>
+            <label for="receiverBankPeriodSelect">Период для банков получателей:</label>
+            <select id="receiverBankPeriodSelect">
+                <option value="week">Неделя</option>
+                <option value="month" selected>Месяц</option>
+                <option value="quarter">Квартал</option>
+                <option value="year">Год</option>
+            </select>
+            <canvas id="receiverBankChart"></canvas>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

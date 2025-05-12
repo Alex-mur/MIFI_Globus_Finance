@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Отчет по транзакциям</title>
+    <style>
+        @font-face {
+           font-family: 'Roboto';" +
+           src: url(resources/fonts/roboto.ttf);
+           font-weight: normal;
+           font-style: normal;
+       }
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: 'Roboto';
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 18pt;
+        }
+        .report-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .period {
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            page-break-inside: avoid;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 5px;
+            text-align: left;
+            font-weight: normal;
+            font-size: 9pt;
+        }
+        td {
+            padding: 6px 5px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 9pt;
+            vertical-align: top;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        .amount {
+            text-align: right;
+            white-space: nowrap;
+        }
+        .income {
+            color: #27ae60;
+            font-weight: normal;
+        }
+        .expense {
+            color: #e74c3c;
+            font-weight: normal;
+        }
+        .total {
+            font-weight: normal;
+        }
+        .totals {
+            margin-top: 20px;
+            text-align: right;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 8pt;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        .category {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .comment {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1 th:text="${title}">Отчет по транзакциям</h1>
+</div>
+
+<div class="report-info">
+    <div>
+        <strong>Период:</strong>
+        <span class="period" th:text="${fromDate} + ' - ' + ${toDate}">01.01.2025 - 31.01.2025</span>
+    </div>
+    <div>
+        <strong>Дата формирования:</strong>
+        <span th:text="${#temporals.format(now, 'dd.MM.yyyy HH:mm')}">30.04.2025 21:49</span>
+    </div>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th style="width: 20%">Дата</th>
+        <th style="width: 15%">Категория</th>
+        <th style="width: 12%">Сумма</th>
+        <th style="width: 12%">Статус</th>
+        <th style="width: 15%">Контрагент</th>
+        <th style="width: 26%">Комментарий</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${#temporals.format(transaction.transactionDate, 'dd.MM.yyyy HH:mm')}">15.04.2025 20:48</td>
+        <td class="category" th:text="${transaction.category?.name} ?: '-'">Транспорт</td>
+        <td class="amount" th:classappend="${transaction.transactionType == 'INCOME' ? 'income' : 'expense'}"
+            th:text="${#numbers.formatDecimal(transaction.amount, 1, 2, 'COMMA') + ' ₽'}">2 500,50 ₽</td>
+        <td th:text="${transaction.status}">Завершено</td>
+        <td th:text="${transaction.receiverBank} ?: '-'">-</td>
+        <td class="comment" th:text="${transaction.comment} ?: '-'">Оплата такси</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="totals">
+    <div>Общий доход: <span class="income" th:text="${#numbers.formatDecimal(totalIncome, 1, 2, 'COMMA') + ' ₽'}">0,00 ₽</span></div>
+    <div>Общий расход: <span class="expense" th:text="${#numbers.formatDecimal(totalExpense, 1, 2, 'COMMA') + ' ₽'}">0,00 ₽</span></div>
+    <div>Итог: <span class="total" th:text="${#numbers.formatDecimal(total, 1, 2, 'COMMA') + ' ₽'}">0,00 ₽</span></div>
+</div>
+</body>
+</html>

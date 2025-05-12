@@ -1,5 +1,6 @@
 package it.globus.finance.service;
 
+import it.globus.finance.configuration.exception.RequestException;
 import it.globus.finance.model.entity.User;
 import it.globus.finance.model.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserService {
     }
 
     public User getByUsername(String username) {
-        return repo.findByUsername(username).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        return repo.findByUsername(username).orElseThrow(() -> new RequestException("Пользователь не найден"));
     }
 
     public UserDetailsService userDetailsService() {
