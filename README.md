@@ -169,10 +169,14 @@ globus-finance/
 
 ## 👨‍💻 Авторы
 
-* [@whysobluebunny](https://t.me/whysobluebunny)
-* [@andrew\_kir](https://t.me/andrew_kir)
-* [@w3bpr0g3r](https://t.me/w3bpr0g3r)
-* [@AlexeyMuraviev](https://t.me/AlexeyMuraviev)
+* Бондаренко Артём
+  </br> tg: [@whysobluebunny](https://t.me/whysobluebunny) github: [whysobluebunny](https://github.com/whysobluebunny)
+* Кирюхин Андрей
+  </br> tg: [@andrew\_kir](https://t.me/andrew_kir) github: [andrewkir](https://github.com/andrewkir)
+* Никоненко Лев
+  </br> tg: [@w3bpr0g3r](https://t.me/w3bpr0g3r) github: [lewebcode](https://github.com/lewebcode)
+* Алексей Муравьевём
+  </br> tg: [@AlexeyMuraviev](https://t.me/AlexeyMuraviev) github: [Alex-mur](https://github.com/Alex-mur)
 
 ---
 
