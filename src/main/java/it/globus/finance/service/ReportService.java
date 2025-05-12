@@ -9,7 +9,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,22 +48,22 @@ public class ReportService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         List<Transaction> filteredTransactions = new ArrayList<>(transactions);
-        LocalDateTime dateTimeFrom;
+        LocalDate dateTimeFrom;
         if (request.getReportStartDate() != null) {
-            dateTimeFrom = LocalDateTime.parse(request.getReportStartDate(), formatter);
+            dateTimeFrom = LocalDate.parse(request.getReportStartDate(), formatter);
             filteredTransactions = filteredTransactions.stream().filter(transaction -> {
-                LocalDateTime date = transaction.getTransactionDate();
+                LocalDate date = transaction.getTransactionDate().toLocalDate();
                 return date.equals(dateTimeFrom) || date.isAfter(dateTimeFrom);
             }).toList();
         } else {
             dateTimeFrom = null;
         }
 
-        LocalDateTime dateTimeTo;
+        LocalDate dateTimeTo;
         if (request.getReportEndDate() != null) {
-            dateTimeTo = LocalDateTime.parse(request.getReportEndDate(), formatter);
+            dateTimeTo = LocalDate.parse(request.getReportEndDate(), formatter);
             filteredTransactions = filteredTransactions.stream().filter(transaction -> {
-                LocalDateTime date = transaction.getTransactionDate();
+                LocalDate date = transaction.getTransactionDate().toLocalDate();
                 return date.equals(dateTimeTo) || date.isBefore(dateTimeTo);
             }).toList();
         } else {
