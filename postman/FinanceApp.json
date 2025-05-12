@@ -1,7 +1,7 @@
 {
   "info": {
-    "_postman_id": "ac6cc32f-e537-4b2c-ae87-3438722c4900",
-    "name": "FinanceApp",
+    "_postman_id": "5e8fbd1a-f89e-46f0-b15b-ed91dfe944e4",
+    "name": "FinanceApp Copy",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
     "_exporter_id": "17868740"
   },
@@ -251,6 +251,60 @@
       ]
     },
     {
+      "name": "report",
+      "item": [
+        {
+          "name": "Generate Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.environment.set(\"last_report_filename\", json.filename);",
+                  "console.log(\"✅ Отчёт сохранён как:\", json.filename);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportStartDate\": \"10.04.2025\",\n  \"reportEndDate\": \"22.04.2025\"\n}"
+            },
+            "url": "http://localhost:8080/api/reports/generate"
+          },
+          "response": []
+        },
+        {
+          "name": "Download Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "http://localhost:8080/api/reports/{{last_report_filename}}/download"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "update transaction",
       "request": {
         "method": "PUT",
@@ -285,6 +339,9 @@
         }
       ],
       "request": {
+        "auth": {
+          "type": "noauth"
+        },
         "method": "POST",
         "header": [],
         "body": {

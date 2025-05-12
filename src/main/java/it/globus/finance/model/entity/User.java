@@ -1,5 +1,7 @@
 package it.globus.finance.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.globus.finance.model.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -45,6 +47,9 @@ public class User implements UserDetails {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+
+    @JsonIgnore
+    @Schema(hidden = true)
     @Getter
     @Setter
     @ElementCollection
