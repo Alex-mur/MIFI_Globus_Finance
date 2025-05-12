@@ -4,6 +4,7 @@ package it.globus.finance.component;
 import it.globus.finance.model.CategoryType;
 import it.globus.finance.model.Role;
 import it.globus.finance.model.entity.Category;
+import it.globus.finance.model.entity.Status;
 import it.globus.finance.model.entity.Transaction;
 import it.globus.finance.model.entity.User;
 import it.globus.finance.model.repo.CategoryRepo;
@@ -78,7 +79,7 @@ public class SampleDataInitializer {
 
         String[] senderBanks = {"Сбербанк", "Тинькофф", "ВТБ", "Альфа-Банк"};
         String[] receiverBanks = {"Банк Открытие", "Газпромбанк", "Райффайзен"};
-        String[] statuses = {"Новая", "Подтвержденная", "В обработке", "Отменена", "Платеж выполнен", "Платеж удален", "Возврат"};
+        String[] statuses = {Status.NEW, Status.CONFIRMED, Status.PROCESSING, Status.CANCELED, Status.PAYMENT_COMPLETED, Status.PAYMENT_DELETED, Status.REFUNDED};
         String[] transactionTypes = {"INCOME", "EXPENSE"};
 
         for (int i = 0; i < 30; i++) {
