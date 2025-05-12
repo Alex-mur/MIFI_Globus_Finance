@@ -18,13 +18,13 @@
         <form id="reportForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Дата от -->
             <div>
-                <label for="dateFrom" class="block text-sm font-medium text-gray-700">Дата от</label>
-                <input type="date" id="dateFrom" name="dateFrom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <label for="reportStartDate" class="block text-sm font-medium text-gray-700">Дата от</label>
+                <input type="date" id="reportStartDate" name="reportStartDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             <!-- Дата до -->
             <div>
-                <label for="dateTo" class="block text-sm font-medium text-gray-700">Дата до</label>
-                <input type="date" id="dateTo" name="dateTo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <label for="reportEndDate" class="block text-sm font-medium text-gray-700">Дата до</label>
+                <input type="date" id="reportEndDate" name="reportEndDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             <!-- Скрытое поле для JWT токена -->
             <input type="hidden" id="jwtToken" name="jwtToken">
@@ -140,18 +140,33 @@
 
         // Собираем данные формы
         const formData = new FormData(reportForm);
-        const data = {};
+        let data = {};
         for (let [key, value] of formData.entries()) {
             if (value && key !== 'jwtToken') { // Исключаем пустые значения, кроме jwtToken
                 data[key] = value;
             }
         }
 
+        function transformDateFormat(dateObj) {
+            const formatDate = (dateStr) => {
+                const [year, month, day] = dateStr.split('-');
+                return `${day}.${month}.${year}`;
+            };
+
+            return {
+                reportStartDate: formatDate(dateObj.reportStartDate),
+                reportEndDate: formatDate(dateObj.reportEndDate),
+            };
+        }
+
         // Валидация дат
-        if (data.dateFrom && data.dateTo && new Date(data.dateTo) < new Date(data.dateFrom)) {
+        if (data.reportStartDate && data.reportEndDate && new Date(data.reportEndDate) < new Date(data.reportStartDate)) {
             showMessage('Дата "до" не может быть раньше даты "от"', true);
             return;
         }
+
+        data = transformDateFormat(data);
+        console.log(data);
 
         try {
             const response = await fetch('/api/reports/generate', {
