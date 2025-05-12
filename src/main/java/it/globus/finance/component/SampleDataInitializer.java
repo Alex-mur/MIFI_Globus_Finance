@@ -78,7 +78,7 @@ public class SampleDataInitializer {
 
         String[] senderBanks = {"Сбербанк", "Тинькофф", "ВТБ", "Альфа-Банк"};
         String[] receiverBanks = {"Банк Открытие", "Газпромбанк", "Райффайзен"};
-        String[] statuses = {"Завершено", "В обработке", "Отменено"};
+        String[] statuses = {"Новая", "Подтвержденная", "В обработке", "Отменена", "Платеж выполнен", "Платеж удален", "Возврат"};
         String[] transactionTypes = {"INCOME", "EXPENSE"};
 
         for (int i = 0; i < 30; i++) {
