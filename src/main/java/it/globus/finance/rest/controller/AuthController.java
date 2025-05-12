@@ -2,6 +2,7 @@ package it.globus.finance.rest.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.globus.finance.rest.dto.JwtAuthenticationResponse;
 import it.globus.finance.rest.dto.SignInRequest;
 import it.globus.finance.rest.dto.SignUpRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@SecurityRequirement(name = "")
 public class AuthController {
     private final AuthenticationService authenticationService;
 

@@ -1,6 +1,7 @@
 package it.globus.finance.rest.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.globus.finance.model.entity.Transaction;
 import it.globus.finance.model.entity.TransactionHistory;
 import it.globus.finance.rest.dto.TransactionCreateRequest;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
+@SecurityRequirement(name = "bearerAuth")
 public class TransactionController {
 
     private final TransactionService transactionService;

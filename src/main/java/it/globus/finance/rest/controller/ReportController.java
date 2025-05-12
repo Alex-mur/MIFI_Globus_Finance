@@ -2,6 +2,7 @@ package it.globus.finance.rest.controller;
 
 import com.lowagie.text.DocumentException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.globus.finance.rest.dto.FileSaveResponse;
 import it.globus.finance.rest.dto.ReportCreateRequest;
 import it.globus.finance.service.ReportService;
@@ -17,6 +18,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/reports")
+@SecurityRequirement(name = "bearerAuth")
 public class ReportController {
 
     private final ReportService reportService;
