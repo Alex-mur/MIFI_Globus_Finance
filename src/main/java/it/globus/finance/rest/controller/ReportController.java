@@ -1,6 +1,7 @@
 package it.globus.finance.rest.controller;
 
 import com.lowagie.text.DocumentException;
+import io.swagger.v3.oas.annotations.Operation;
 import it.globus.finance.rest.dto.FileSaveResponse;
 import it.globus.finance.rest.dto.ReportCreateRequest;
 import it.globus.finance.service.ReportService;
@@ -24,6 +25,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
+    @Operation(summary = "Создание PDF-отчета")
     @PostMapping("/generate")
     public ResponseEntity<FileSaveResponse> createReport(
             @RequestBody @Valid ReportCreateRequest request
@@ -43,6 +45,7 @@ public class ReportController {
         }
     }
 
+    @Operation(summary = "Загрузка PDF-отчета")
     @GetMapping("/{filename}/download")
     public ResponseEntity<byte[]> getReport(@PathVariable String filename) {
         try {

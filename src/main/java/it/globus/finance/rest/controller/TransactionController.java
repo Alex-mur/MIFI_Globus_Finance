@@ -1,5 +1,6 @@
 package it.globus.finance.rest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import it.globus.finance.model.entity.Transaction;
 import it.globus.finance.model.entity.TransactionHistory;
 import it.globus.finance.rest.dto.TransactionCreateRequest;
@@ -24,6 +25,8 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+
+    @Operation(summary = "Создание новой транзакции")
     @PostMapping()
     public ResponseEntity<?> createTransaction(
             @RequestBody @Valid TransactionCreateRequest request) {
@@ -34,6 +37,7 @@ public class TransactionController {
         }
     }
 
+    @Operation(summary = "Получение транзакции по ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getTransaction(
             @PathVariable Long id) {
@@ -44,6 +48,7 @@ public class TransactionController {
         }
     }
 
+    @Operation(summary = "Удаление транзакции по ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTransaction(@PathVariable Long id) {
         try {
@@ -54,7 +59,7 @@ public class TransactionController {
         }
     }
 
-
+    @Operation(summary = "Обновление транзакции по ID")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTransaction(
             @PathVariable Long id,
@@ -66,12 +71,14 @@ public class TransactionController {
         }
     }
 
+    @Operation(summary = "Фильтрация транзакций")
     @PostMapping("/filter")
     public ResponseEntity<List<Transaction>> filterTransactions(@RequestBody TransactionFilterRequest request) {
         List<Transaction> filtered = transactionService.filterTransactions(request);
         return ResponseEntity.ok(filtered);
     }
 
+    @Operation(summary = "История всех транзакций или в диапазоне дат")
     @PostMapping("/history")
     public ResponseEntity<List<TransactionHistory>> getTransactionHistory(
             @RequestBody @Valid TransactionHistoryFilterRequest request) {
